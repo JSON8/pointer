@@ -11,7 +11,7 @@ var manuelstofer = require('json-pointer') // https://github.com/manuelstofer/js
 var flitbit = require('json-ptr') // https://github.com/flitbit/json-ptr
 
 var doc = {
-  "foo": [1, 2, 3, 4],
+  "foo": [1, 2, 3, 4], // eslint-disable-line no-magic-numbers
   "baz": [{
     "qux": "hello",
   }],
@@ -26,41 +26,30 @@ var evaluate = jsonpointerjs.get(doc);
 
 var ptr = flitbit.create(pointer);
 
-benchmark.Suite('pointer')
-.add('find', function() {
+var suite = benchmark.Suite('pointer')
+
+suite.add('find', function() {
   ooPointer.find(doc, pointer)
-})
-.add('compiled', function() {
+}).add('compiled', function() {
   compiled(doc)
-})
-.add('compile + compiled', function() {
+}).add('compile + compiled', function() {
   ooPointer.compile(pointer)(doc)
-})
-.add('janl/node-jsonpointer get', function () {
+}).add('janl/node-jsonpointer get', function () {
   jsonpointer.get(doc, pointer)
-})
-.add('janl/node-jsonpointer compiled get', function () {
+}).add('janl/node-jsonpointer compiled get', function () {
   janlCompiled.get(doc)
-})
-.add('alexeykuzmin/jsonpointer.js get', function () {
+}).add('alexeykuzmin/jsonpointer.js get', function () {
   jsonpointer.get(doc, pointer)
-})
-.add('alexeykuzmin/jsonpointer.js evaluate', function () {
+}).add('alexeykuzmin/jsonpointer.js evaluate', function () {
   evaluate(pointer)
-})
-.add('manuelstofer/json-pointer get', function () {
+}).add('manuelstofer/json-pointer get', function () {
   manuelstofer.get(doc, pointer)
-})
-.add('flitbit/json-ptr get', function () {
+}).add('flitbit/json-ptr get', function () {
   flitbit.get(doc, pointer)
-})
-.add('flitbit/json-ptr compiled', function () {
+}).add('flitbit/json-ptr compiled', function () {
   ptr.get(doc)
-})
-.on('cycle', function(event) {
+}).on('cycle', function(event) {
   console.log(event.target.toString())
-})
-.on('complete', function() {
-  console.log('Fastest is ' + this.filter('fastest').map('name'))
-})
-.run()
+}).on('complete', function() {
+  console.log('Fastest is ' + suite.filter('fastest').map('name'))
+}).run()
